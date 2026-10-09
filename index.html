@@ -1,11 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <meta name="theme-color" content="#ff4f50">
+  <title>売値チェッカー</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
+  <header class="app-header">
+    <h1>売値チェッカー</h1>
+    <p class="subtitle">写真を撮るだけで、メルカリ・ヤフオクでの相場をAIが調べます</p>
+  </header>
+
+  <main>
+    <details class="card settings" id="settings">
+      <summary>設定（Anthropic APIキー）</summary>
+      <label for="api-key">APIキー</label>
+      <input id="api-key" type="password" placeholder="sk-ant-..." autocomplete="off">
+      <p class="hint">キーはこの端末のブラウザ内（localStorage）にのみ保存され、Anthropic API への送信にだけ使われます。</p>
+      <button id="save-key" type="button" class="secondary">保存</button>
+    </details>
+
+    <section class="card">
+      <label class="photo-picker" for="photo">
+        <img id="preview" alt="" hidden>
+        <span id="photo-placeholder">📷 タップして撮影 / 画像を選択</span>
+      </label>
+      <input id="photo" type="file" accept="image/*" capture="environment" hidden>
+
+      <label for="memo">補足（任意）</label>
+      <textarea id="memo" rows="2" placeholder="例: 未使用・箱あり / 傷あり / 付属品なし"></textarea>
+
+      <button id="analyze" type="button" class="primary" disabled>相場を調べる</button>
+    </section>
+
+    <section id="status" class="card status" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <ul id="status-log"></ul>
+    </section>
+
+    <section id="error" class="card error" hidden></section>
+
+    <section id="result" hidden>
+      <div class="card product">
+        <h2 id="product-name"></h2>
+        <p id="product-detail" class="muted"></p>
+        <p id="confidence" class="badge"></p>
+      </div>
+
+      <div class="markets">
+        <div class="card market mercari">
+          <h3>メルカリ</h3>
+          <div class="price-main" id="mercari-recommended"></div>
+          <p class="muted">推奨出品価格</p>
+          <dl>
+            <dt>売れた価格帯</dt><dd id="mercari-range"></dd>
+            <dt>中央値</dt><dd id="mercari-median"></dd>
+            <dt>手数料10%差引後</dt><dd id="mercari-net"></dd>
+          </dl>
+          <a id="mercari-link" target="_blank" rel="noopener">売り切れ商品を見る ↗</a>
+        </div>
+
+        <div class="card market yahoo">
+          <h3>ヤフオク!</h3>
+          <div class="price-main" id="yahoo-recommended"></div>
+          <p class="muted">想定落札価格</p>
+          <dl>
+            <dt>落札価格帯</dt><dd id="yahoo-range"></dd>
+            <dt>中央値</dt><dd id="yahoo-median"></dd>
+            <dt>手数料10%差引後</dt><dd id="yahoo-net"></dd>
+          </dl>
+          <a id="yahoo-link" target="_blank" rel="noopener">落札相場を見る ↗</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>おすすめ</h3>
+        <p id="advice"></p>
+        <h3>メモ</h3>
+        <ul id="notes"></ul>
+        <h3>参照した情報</h3>
+        <ul id="sources" class="sources"></ul>
+      </div>
+
+      <p class="disclaimer">※ AIによる推定値です。実際の出品前に必ずリンク先で最新の相場を確認してください。</p>
+    </section>
+  </main>
+
+  <script type="module" src="index.js"></script>
 </body>
 </html>
